@@ -10,7 +10,7 @@ namespace Ecommerce.Services
     public class TokenServices : ITokenServices
     {
         private readonly IConfiguration _config;
-        private readonly UserManager<User>userManager;
+        private readonly UserManager<User> userManager;
         private readonly SymmetricSecurityKey key;
         public TokenServices(IConfiguration config, UserManager<User> userManager)
         {

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Ecommerce.Models
 {
-    public class User: IdentityUser
+    public class User : IdentityUser
     {
         [Required, Column(TypeName = "varchar"), MaxLength(20)]
         public required string FirstName { get; set; }

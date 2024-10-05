@@ -1,6 +1,9 @@
+using CloudinaryDotNet;
 using Ecommerce.Data;
+using Ecommerce.Helpers;
 using Ecommerce.Interfaces;
 using Ecommerce.Models;
+using Ecommerce.Repository;
 using Ecommerce.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +26,8 @@ builder.Services.AddDbContext<EcommerceContext>(options =>
     options.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<ITokenServices, TokenServices>();
-
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -66,6 +70,17 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader()
                           .AllowCredentials());
 });
+var cloudinarySettings = builder.Configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>();
+var cloudinary = new Cloudinary(new Account(cloudinarySettings.CloudName, cloudinarySettings.ApiKey, cloudinarySettings.ApiSecret));
+builder.Services.AddSingleton(cloudinary); // Register Cloudinary as a singleton
+
+// Add logging
+builder.Services.AddLogging(config =>
+{
+    config.AddConsole(); // Logs to the console
+    config.AddDebug();   // Logs to the debug output
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
