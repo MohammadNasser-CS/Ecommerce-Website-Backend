@@ -55,8 +55,6 @@ namespace Ecommerce.Repository
                         File = new FileDescription(file.FileName, stream),
                         Transformation = new Transformation().Width(500).Height(500).Crop("fill")
                     };
-
-                    // Use the asynchronous upload method if available
                     var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
                     if (uploadResult.Error != null)

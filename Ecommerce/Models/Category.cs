@@ -14,7 +14,6 @@ namespace Ecommerce.Models
         public string Description { get; set; }
         [Required, MaxLength(255)]
         public required string ImageUrl { get; set; }
-        // Navigation property: One Category can have many Products
         [InverseProperty("Category")]
         public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Ecommerce.Controllers
 {
@@ -35,10 +36,14 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> GetProducts([FromQuery] ProductQueryObject query)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { Error = ModelState });
             var products = await productRepository.GetAllAsync(query);
-            var productDtos = products.Select(P => P.ToProductDto());
-            return Ok(new { message = "success", products = productDtos });
+            if (products.Count > 0)
+            {
+                var productDtos = products.Select(P => P.ToProductDto());
+                return Ok(new { Message = "success", products = productDtos });
+            }
+            return NotFound(new { Error = "No products found" });
         }
 
         // GET: api/Product/{id}
@@ -46,14 +51,14 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> GetProduct([FromRoute] int id)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { Error = ModelState });
             var product = await productRepository.GetProductByIdAsync(id);
             if (product == null)
             {
-                return NotFound();
+                return NotFound(new { Error = "No Such product found" });
             }
 
-            return Ok(new { message = "success", product = product.ToProductDto() });
+            return Ok(new { Message = "success", product = product.ToProductDto() });
 
         }
         // POST: api/Product
@@ -62,11 +67,11 @@ namespace Ecommerce.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new { Error = ModelState });
             }
             if (!await categoryRepository.CategoryExists(productDto.CategoryId))
             {
-                return BadRequest("Category Does Not Exist");
+                return BadRequest(new { Error = "Category Does Not Exist" });
             }
             string imageUrl;
             try
@@ -75,13 +80,13 @@ namespace Ecommerce.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Error = ex.Message });
             }
             var product = productDto.CreateProductDto(imageUrl);
 
             await productRepository.CreateProductAsync(product);
 
-            return CreatedAtAction(nameof(GetProduct), new { id = product.ProductId }, new { message = "success", product = product.ToProductDto() });
+            return CreatedAtAction(nameof(GetProduct), new { id = product.ProductId }, new { Message = "success", product = product.ToProductDto() });
         }
 
         // PUT: api/Product/{id}
@@ -89,11 +94,11 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductRequestDto updateProductRequest)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { Error = ModelState });
             var product = await productRepository.UpdateAsync(id, updateProductRequest);
-            if (product == null) return NotFound();
+            if (product == null) return NotFound(new { Error = "No Such product found" });
             updateProductRequest.UpdateProductDto();
-            return Ok(new { message = "success", product = updateProductRequest });
+            return Ok(new { Message = "success", product = updateProductRequest });
 
         }
 
@@ -102,9 +107,9 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> DeleteProduct(int id)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { Error = ModelState });
             var productModel = await productRepository.DeleteAsyny(id);
-            if (productModel == null) return NotFound();
+            if (productModel == null) return NotFound(new { Error = "No Such product found" });
             return NoContent();
         }
     }

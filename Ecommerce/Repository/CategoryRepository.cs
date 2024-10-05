@@ -44,12 +44,12 @@ namespace Ecommerce.Repository
         public async Task<bool> DeleteAsync(int id)
         {
             var deletedCategory = await context.Categories.FirstOrDefaultAsync(C => C.CategoryId == id);
-            if (deletedCategory == null) return false;
+            if (deletedCategory == null) throw new Exception("No Such category found");
             // Check if there are any products related to this category
             var hasRelatedProducts = await context.Products
                 .AnyAsync(p => p.CategoryId == deletedCategory.CategoryId);
 
-            // If there are related products, return a specific response
+            // If there are related products
             if (hasRelatedProducts)
             {
                 return false;
@@ -87,8 +87,6 @@ namespace Ecommerce.Repository
                         File = new FileDescription(file.FileName, stream),
                         Transformation = new Transformation().Width(500).Height(500).Crop("fill")
                     };
-
-                    // Use the asynchronous upload method if available
                     var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
                     if (uploadResult.Error != null)

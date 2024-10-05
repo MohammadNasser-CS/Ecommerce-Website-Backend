@@ -37,7 +37,7 @@ namespace Ecommerce.Mapper
             };
         }
 
-        // Map from ProductDto to Product (For updating an existing product)
+        // Map from UpdateProductDto to Product (For updating an existing product)
         public static Product UpdateProductDto(this UpdateProductRequestDto productDto)
         {
             return new Product

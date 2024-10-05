@@ -24,8 +24,12 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> GetCategories()
         {
             var categories = await _categoryRepository.GetAllAsync();
+            if (categories!.Count > 0)
+            {
             var categoryDtos = categories.Select(C => C.ToCategoryDto()).ToList();
-            return Ok(new { message = "success", categories = categoryDtos });
+            return Ok(new { Message = "success", categories = categoryDtos });
+            }
+            return NotFound(new { Error = "No categories found" });
         }
 
         // GET: api/Category/{id}
@@ -35,10 +39,10 @@ namespace Ecommerce.Controllers
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null)
             {
-                return NotFound();
+                return NotFound(new { Error = "No Such category found" });
             }
             var categoryDto = CategoryMapper.ToCategoryDto(category);
-            return Ok(new { message = "success", category = categoryDto });
+            return Ok(new { Message = "success", category = categoryDto });
         }
 
         // POST: api/Category
@@ -47,7 +51,7 @@ namespace Ecommerce.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new { Error = ModelState });
             }
             string imageUrl;
             try
@@ -56,13 +60,13 @@ namespace Ecommerce.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Error = ex.Message });
             }
             var category = categoryDto.CreateCategoryDto(imageUrl);
 
             await _categoryRepository.CreateAsync(category);
 
-            return CreatedAtAction(nameof(GetCategory), new { id = category.CategoryId }, new { message = "success", category = category.ToCategoryDto() });
+            return CreatedAtAction(nameof(GetCategory), new { id = category.CategoryId }, new { Message = "success", category = category.ToCategoryDto() });
         }
 
         // PUT: api/Category/{id}
@@ -70,11 +74,11 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryRequestDto updateCategory)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { Error = ModelState });
             var category = await _categoryRepository.UpdateAsync(id, updateCategory);
-            if (category == null) return NotFound();
+            if (category == null) return NotFound(new { Error = "No Such category found" });
             updateCategory.UpdateCategoryDto(category);
-            return Ok(new { message = "success", category = updateCategory });
+            return Ok(new { Message = "success", category = updateCategory });
         }
 
         // DELETE: api/Category/{id}
@@ -87,14 +91,14 @@ namespace Ecommerce.Controllers
 
                 if (!success)
                 {
-                    return BadRequest(new { message = "Cannot delete this category as there are products associated with it." });
+                    return BadRequest(new { Message = "Cannot delete this category as there are products associated with it." });
                 }
 
-                return Ok(new { message = "Category deleted successfully." });
+                return Ok(new { Message = "Category deleted successfully." });
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new { Error = ex.Message });
             }
         }
     }

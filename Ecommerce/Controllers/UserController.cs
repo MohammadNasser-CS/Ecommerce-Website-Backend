@@ -30,7 +30,7 @@ namespace Ecommerce.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                    return BadRequest(new { Error = ModelState });
                 var user = new User
                 {
                     FirstName = registerDto.FirstName,
@@ -76,7 +76,7 @@ namespace Ecommerce.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                    return BadRequest(new { Error = ModelState });
                 var user = new User
                 {
                     FirstName = registerDto.FirstName,
@@ -120,11 +120,11 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { Error = ModelState });
             var user = await _userManager.Users.FirstOrDefaultAsync(U => U.Email == loginDto.Email);
-            if (user == null) return Unauthorized("Invalid Email");
+            if (user == null) return Unauthorized(new { Error = "Invalid Email" });
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password!, false);
-            if (!result.Succeeded) return Unauthorized("Username not found and/or password incorrect");
+            if (!result.Succeeded) return Unauthorized(new { Error = "Username not found and/or password incorrect" });
             var token = await _tokenServices.createToken(user);
             return Ok(
                 new
@@ -140,12 +140,12 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userManager.Users.ToListAsync();
-            if (!users.Any()) // Check if there are no users
+            if (!users.Any())
             {
-                return NoContent(); // Or return NotFound() if you prefer
+                return NoContent();
             }
             var usersDto = users.Select(S => S.ToUserDto());
-            return Ok(usersDto);
+            return Ok(new { Message = "sucess", Uesrs = usersDto });
         }
     }
 }

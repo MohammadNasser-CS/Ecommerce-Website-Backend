@@ -27,7 +27,6 @@ namespace Ecommerce.Models
         public DateTime AddDate { get; set; }
         [Range(0, int.MaxValue)]
         public int TotalSales { get; set; }
-        // Foreign key for Category
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         [InverseProperty("Products"), AllowNull, DeleteBehavior(DeleteBehavior.Restrict)]
