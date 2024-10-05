@@ -9,14 +9,12 @@ namespace Ecommerce.Services
 {
     public class TokenServices : ITokenServices
     {
-        private readonly IConfiguration _config;
         private readonly UserManager<User> userManager;
         private readonly SymmetricSecurityKey key;
-        public TokenServices(IConfiguration config, UserManager<User> userManager)
+        public TokenServices(UserManager<User> userManager)
         {
-            this._config = config;
             this.userManager = userManager;
-            key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]!));
+            key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SIGNING_KEY")!));
         }
         public async Task<string> createToken(User user)
         {
@@ -37,7 +35,7 @@ namespace Ecommerce.Services
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = credentials,
-                Issuer = _config["JWT:Issuer"],
+                Issuer = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY")!,
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);

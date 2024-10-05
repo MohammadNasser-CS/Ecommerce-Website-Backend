@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -51,13 +52,13 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidIssuer = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY")!,
         ValidateAudience = false,
         ValidateIssuerSigningKey = true,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero,
         IssuerSigningKey = new SymmetricSecurityKey(
-            System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)
+            System.Text.Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SIGNING_KEY")!)
         )
     };
 });
@@ -70,7 +71,12 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader()
                           .AllowCredentials());
 });
-var cloudinarySettings = builder.Configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>();
+var cloudinarySettings = new CloudinarySettings
+{
+    CloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME")!,
+    ApiKey = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY")!,
+    ApiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET")!
+};
 var cloudinary = new Cloudinary(new Account(cloudinarySettings.CloudName, cloudinarySettings.ApiKey, cloudinarySettings.ApiSecret));
 builder.Services.AddSingleton(cloudinary); // Register Cloudinary as a singleton
 

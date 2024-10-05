@@ -29,7 +29,7 @@ namespace Ecommerce.Controllers
             var categoryDtos = categories.Select(C => C.ToCategoryDto()).ToList();
             return Ok(new { Message = "success", categories = categoryDtos });
             }
-            return NotFound(new { Error = "No categories found" });
+            return NotFound(new { Error = "No categories found"});
         }
 
         // GET: api/Category/{id}
