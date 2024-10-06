@@ -10,6 +10,7 @@ namespace Ecommerce.Mapper
         {
             return new CategoryDto
             {
+                Products= category.Products.Select(C => C.ToProductDto()).ToList(),
                 ImageUrl = category.ImageUrl,
                 CategoryId = category.CategoryId,
                 Name = category.Name,
