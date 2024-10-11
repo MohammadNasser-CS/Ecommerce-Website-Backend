@@ -24,7 +24,6 @@ namespace Ecommerce.Services
                 new Claim(JwtRegisteredClaimNames.GivenName,user.UserName!),
             };
             var roles = await userManager.GetRolesAsync(user);
-
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -35,7 +34,7 @@ namespace Ecommerce.Services
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = credentials,
-                Issuer = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY")!,
+                Issuer = Environment.GetEnvironmentVariable("JWT_ISSUER")!,
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,14 +53,14 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY")!,
+        ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER")!,
         ValidateAudience = false,
         ValidateIssuerSigningKey = true,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero,
         IssuerSigningKey = new SymmetricSecurityKey(
             System.Text.Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SIGNING_KEY")!)
-        )
+        ),
     };
 });
 // Configure CORS policy
@@ -77,7 +78,8 @@ var cloudinarySettings = new CloudinarySettings
     ApiKey = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY")!,
     ApiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET")!
 };
-var cloudinary = new Cloudinary(new Account(cloudinarySettings.CloudName, cloudinarySettings.ApiKey, cloudinarySettings.ApiSecret));
+var cloudinary = new Cloudinary(new Account(cloudinarySettings?.CloudName, cloudinarySettings?.ApiKey, cloudinarySettings?.ApiSecret));
+
 builder.Services.AddSingleton(cloudinary); // Register Cloudinary as a singleton
 
 // Add logging

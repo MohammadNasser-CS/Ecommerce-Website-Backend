@@ -142,7 +142,7 @@ namespace Ecommerce.Controllers
             var users = await _userManager.Users.ToListAsync();
             if (!users.Any())
             {
-                return NoContent();
+                return NotFound(new { Error = "No useres found" });
             }
             var usersDto = users.Select(S => S.ToUserDto());
             return Ok(new { Message = "sucess", Uesrs = usersDto });

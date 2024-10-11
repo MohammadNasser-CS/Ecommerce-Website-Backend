@@ -33,7 +33,7 @@ namespace Ecommerce.Mapper
                 ImageUrl = imageUrl,
                 CategoryId = productDto.CategoryId,
                 Rating = productDto.Rating ?? 1,
-                TotalSales = productDto.TotalSales ?? 2
+                TotalSales = productDto.TotalSales ?? 0
             };
         }
 
