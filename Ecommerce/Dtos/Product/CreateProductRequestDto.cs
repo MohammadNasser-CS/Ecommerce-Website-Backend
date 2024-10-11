@@ -18,11 +18,12 @@ namespace Ecommerce.Dtos.Product
         public required string Description { get; set; }
 
         [Required(ErrorMessage = "The Image field is required.")]
-        public IFormFile Image { get; set; } // Correctly defined as IFormFile
+        public required IFormFile Image { get; set; } // Correctly defined as IFormFile
 
         [Required(ErrorMessage = "The CategoryId field is required.")]
         public int CategoryId { get; set; }
-
+        [Required(ErrorMessage = "The Stock field is required.")]
+        public  int? Stock { get; set; }
         [Range(0, 5, ErrorMessage = "The Rating must be between 0 and 5."), DefaultValue(0)]
         public decimal? Rating { get; set; } // Nullable decimal
 

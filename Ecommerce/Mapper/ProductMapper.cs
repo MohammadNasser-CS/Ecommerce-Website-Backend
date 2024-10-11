@@ -16,6 +16,7 @@ namespace Ecommerce.Mapper
                 Description = product.Description,
                 ImageUrl = product.ImageUrl,
                 CategoryName = product.Category.Name,
+                Stock = product.Stock,
                 Rating = product.Rating,
                 TotalSales = product.TotalSales,
 
@@ -32,25 +33,21 @@ namespace Ecommerce.Mapper
                 Description = productDto.Description,
                 ImageUrl = imageUrl,
                 CategoryId = productDto.CategoryId,
+                Stock = productDto.Stock ?? 1,
                 Rating = productDto.Rating ?? 1,
                 TotalSales = productDto.TotalSales ?? 0
             };
         }
 
-        // Map from UpdateProductDto to Product (For updating an existing product)
-        public static Product UpdateProductDto(this UpdateProductRequestDto productDto)
+        public static void UpdateProduct(this Product product, UpdateProductRequestDto productDto)
         {
-            return new Product
-            {
-                Name = productDto.Name,
-                Price = productDto.Price,
-                Description = productDto.Description,
-                ImageUrl = productDto.ImageUrl,
-                CategoryId = productDto.CategoryId,
-                Rating = productDto.Rating,
-                TotalSales = productDto.TotalSales
-            };
-
+            product.Name = productDto.Name ?? product.Name;
+            product.Price = productDto.Price ?? product.Price;
+            product.Description = productDto.Description ?? product.Description;
+            product.Stock = productDto.Stock ?? product.Stock;
+            product.Rating = productDto.Rating ?? product.Rating;
+            product.TotalSales = productDto.TotalSales ?? product.TotalSales;
+            product.CategoryId = productDto.CategoryId ?? product.CategoryId;
         }
     }
 }

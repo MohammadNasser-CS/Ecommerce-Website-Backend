@@ -11,6 +11,7 @@ namespace Ecommerce.Dtos.Product
         public required string Description { get; set; }
         public required string ImageUrl { get; set; }
         public required string CategoryName { get; set; }
+        public required int Stock { get; set; }
         public decimal Rating { get; set; }
         public int TotalSales { get; set; }
         public override string ToString()

@@ -37,11 +37,20 @@ namespace Ecommerce.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(new { Error = ModelState });
+            var totalProducts = await productRepository.CountAsync(query);
             var products = await productRepository.GetAllAsync(query);
             if (products.Count > 0)
             {
                 var productDtos = products.Select(P => P.ToProductDto());
-                return Ok(new { Message = "success", products = productDtos });
+                var totalPages = (int)Math.Ceiling((double)totalProducts / query.PageSize);
+
+                return Ok(new
+                {
+                    Message = "success",
+                    currentPage = query.PageNumber,
+                    totalPages = totalPages,
+                    products = productDtos
+                });
             }
             return NotFound(new { Error = "No products found" });
         }
@@ -95,11 +104,12 @@ namespace Ecommerce.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(new { Error = ModelState });
-            var product = await productRepository.UpdateAsync(id, updateProductRequest);
-            if (product == null) return NotFound(new { Error = "No Such product found" });
-            updateProductRequest.UpdateProductDto();
-            return Ok(new { Message = "success", product = updateProductRequest });
-
+            var product = await productRepository.GetProductByIdAsync(id);
+            if (product == null)
+                return NotFound(new { Error = "No such product found" });
+            product.UpdateProduct(updateProductRequest);
+            await productRepository.UpdateAsync(product);
+            return Ok(new { Message = "success", product = product.ToProductDto() });
         }
 
         // DELETE: api/Product/{id}

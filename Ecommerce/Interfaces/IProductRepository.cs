@@ -12,7 +12,8 @@ namespace Ecommerce.Interfaces
         Task<bool> ProductExists(int productId);
         Task<Product?> GetProductByIdAsync(int productId);
         public Task<List<Product>> GetAllAsync(ProductQueryObject productQuery);
-        public Task<Product?> UpdateAsync(int id, UpdateProductRequestDto updateProduct);
+        public Task<Product?> UpdateAsync(Product product);
         public Task<Product?> DeleteAsyny(int id);
+        public Task<int> CountAsync(ProductQueryObject productQuery);
     }
 }

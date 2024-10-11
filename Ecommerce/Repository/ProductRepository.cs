@@ -83,7 +83,7 @@ namespace Ecommerce.Repository
             }
             if (productQuery.Price != null)
             {
-                products = products.Where(B => B.Price.Equals(productQuery.Price));
+                products = products.Where(B => B.Price <= productQuery.Price);
             }
             if (!string.IsNullOrWhiteSpace(productQuery.SortBy))
             {
@@ -92,9 +92,9 @@ namespace Ecommerce.Repository
                     products = productQuery.IsDesc ? products.OrderByDescending(B => B.Name) : products.OrderBy(B => B.Name);
 
                 }
-                else if (productQuery.SortBy == "Description")
+                else if (productQuery.SortBy == "Rating")
                 {
-                    products = productQuery.IsDesc ? products.OrderByDescending(B => B.Description) : products.OrderBy(B => B.Description);
+                    products = productQuery.IsDesc ? products.OrderByDescending(B => B.Rating) : products.OrderBy(B => B.Rating);
                 }
                 else if (productQuery.SortBy == "Price")
                 {
@@ -105,19 +105,11 @@ namespace Ecommerce.Repository
             return await products.Skip(skipSize).Take(productQuery.PageSize).ToListAsync();
         }
 
-        public async Task<Product?> UpdateAsync(int id, UpdateProductRequestDto updateProduct)
+        public async Task<Product?> UpdateAsync(Product product)
         {
-            var existingProduct = await context.Products.FirstOrDefaultAsync(B => B.ProductId == id);
-            if (existingProduct == null) return null;
-            existingProduct.Name = updateProduct.Name;
-            existingProduct.Description = updateProduct.Description;
-            existingProduct.Price = updateProduct.Price;
-            existingProduct.Rating = updateProduct.Rating;
-            existingProduct.CategoryId = updateProduct.CategoryId;
-            existingProduct.TotalSales = updateProduct.TotalSales;
-            existingProduct.ImageUrl = updateProduct.ImageUrl;
+            context.Products.Update(product);  // Optional but can help explicitly mark it as updated
             await context.SaveChangesAsync();
-            return existingProduct;
+            return product;
         }
 
         public async Task<Product?> DeleteAsyny(int id)
@@ -140,6 +132,27 @@ namespace Ecommerce.Repository
             context.Products.Remove(deletedProduct);
             await context.SaveChangesAsync();
             return deletedProduct;
+        }
+        public async Task<int> CountAsync(ProductQueryObject productQuery)
+        {
+            var products = context.Products.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(productQuery.Name))
+            {
+                products = products.Where(B => B.Name.Contains(productQuery.Name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(productQuery.Category))
+            {
+                products = products.Where(B => B.Category.Name.Contains(productQuery.Category));
+            }
+
+            if (productQuery.Price != null)
+            {
+                products = products.Where(B => B.Price <= productQuery.Price);
+            }
+
+            return await products.CountAsync();
         }
         // Helper method to extract public ID from Cloudinary URL
         private string GetPublicIdFromUrl(string url)
