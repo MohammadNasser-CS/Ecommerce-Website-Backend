@@ -5,6 +5,17 @@ namespace Ecommerce.Mapper
 {
     public static class CategoryMapper
     {
+        // Map from Category entity to CategoriesDto
+        public static CategoriesDto ToCategoriesDto(this Category category)
+        {
+            return new CategoriesDto
+            {
+                ImageUrl = category.ImageUrl,
+                CategoryId = category.CategoryId,
+                Name = category.Name,
+                Description = category.Description
+            };
+        }
         // Map from Category entity to CategoryDto
         public static CategoryDto ToCategoryDto(this Category category)
         {

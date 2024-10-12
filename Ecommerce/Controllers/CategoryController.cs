@@ -26,7 +26,7 @@ namespace Ecommerce.Controllers
             var categories = await _categoryRepository.GetAllAsync();
             if (categories!.Count > 0)
             {
-            var categoryDtos = categories.Select(C => C.ToCategoryDto()).ToList();
+            var categoryDtos = categories.Select(C => C.ToCategoriesDto()).ToList();
             return Ok(new { Message = "success", categories = categoryDtos });
             }
             return NotFound(new { Error = "No categories found"});
