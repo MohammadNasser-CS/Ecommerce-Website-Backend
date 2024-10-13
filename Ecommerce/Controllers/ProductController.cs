@@ -103,10 +103,20 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductRequestDto updateProductRequest)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(new { Error = ModelState });
+            }
             var product = await productRepository.GetProductByIdAsync(id);
             if (product == null)
                 return NotFound(new { Error = "No such product found" });
+            if (updateProductRequest.CategoryId.HasValue)
+            {
+                var categoryExists = await categoryRepository.CategoryExists(updateProductRequest.CategoryId.Value);
+                if (!categoryExists)
+                {
+                    return BadRequest(new { Error = "Category does not exist" });
+                }
+            }
             product.UpdateProduct(updateProductRequest);
             await productRepository.UpdateAsync(product);
             return Ok(new { Message = "success", product = product.ToProductDto() });

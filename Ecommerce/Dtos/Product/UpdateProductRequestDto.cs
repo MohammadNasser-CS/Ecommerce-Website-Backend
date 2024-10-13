@@ -10,7 +10,6 @@ namespace Ecommerce.Dtos.Product
         public decimal? Price { get; set; }
         [MaxLength(500, ErrorMessage = "The Description field must be a maximum of 500 characters.")]
         public string? Description { get; set; }
-        [Url(ErrorMessage = "The ImageUrl field must be a valid URL.")]
         public int? CategoryId { get; set; }
         public int? Stock { get; set; }
         [Range(1, 5, ErrorMessage = "The Rating must be between 1 and 5.")]
