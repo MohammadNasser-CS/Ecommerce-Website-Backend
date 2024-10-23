@@ -10,5 +10,9 @@ namespace Ecommerce.Models
         public required string FirstName { get; set; }
         [Required, Column(TypeName = "varchar"), MaxLength(20)]
         public required string LastName { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+        [InverseProperty("User")]
+        public virtual Cart Cart { get; set; }
     }
 }

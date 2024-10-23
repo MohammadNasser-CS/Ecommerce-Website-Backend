@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
@@ -8,7 +9,7 @@ namespace Ecommerce.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CategoryId { get; set; }
-        [Required, MaxLength(100)]
+        [Required,MaxLength(100)]
         public required string Name { get; set; }
         [AllowNull, MaxLength(500)]
         public string Description { get; set; }

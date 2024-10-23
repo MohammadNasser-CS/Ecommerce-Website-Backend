@@ -65,9 +65,12 @@ builder.Services.AddAuthentication(options =>
 });
 // Configure CORS policy
 builder.Services.AddCors(options =>
-{
+{https://ecommerce-website-frontend-git-main-mohammadnassercs-projects.vercel.app/
     options.AddPolicy("AllowFrontend",
-        builder => builder.WithOrigins("http://localhost:5173") // Change to your frontend's URL
+        builder => builder.WithOrigins("http://localhost:5173"
+                           ,"https://ecommerce-website-frontend-three.vercel.app"
+                           ,"https://ecommerce-website-frontend-mohammadnassercs-projects.vercel.app"
+                           ,"https://ecommerce-website-frontend-git-main-mohammadnassercs-projects.vercel.app") // Change to your frontend's URL
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials());
